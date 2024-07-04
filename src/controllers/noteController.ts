@@ -73,17 +73,24 @@ export const deleteNote = async (req: AuthRequest, res: Response) => {
 
 export const searchNotes = async (req: AuthRequest, res: Response) => {
   try {
-    const { query } = req.query;
+    const { q } = req.query;
+
+    if (!q || typeof q !== "string") {
+      return res.status(400).json({ message: "Invalid search query" });
+    }
+
     const notes = await Note.find({
       user: req.userId,
       $or: [
-        { title: { $regex: query, $options: "i" } },
-        { body: { $regex: query, $options: "i" } },
-        { tags: { $in: [new RegExp(query as string, "i")] } },
+        { title: { $regex: q, $options: "i" } },
+        { body: { $regex: q, $options: "i" } },
+        { tags: { $in: [new RegExp(q, "i")] } },
       ],
     });
+
     res.json(notes);
   } catch (error) {
+    console.error("Error searching notes:", error);
     res.status(500).json({ message: "Error searching notes", error });
   }
 };
