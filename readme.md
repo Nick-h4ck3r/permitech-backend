@@ -27,7 +27,7 @@ git clone https://github.com/Nick-h4ck3r/permitech-backend.git
 #### Setting Up Environment Variables
 
 ```bash
-cd server
+cd permitech-backend
 ```
 
 Create a .env file in the api directory and add the following environment variables:
