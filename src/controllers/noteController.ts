@@ -1,14 +1,15 @@
-import { Request, Response } from "express";
-import Note, { INote } from "../models/Note";
+import { Response } from "express";
 import { AuthRequest } from "../middleware/auth";
+import Note from "../models/Note";
 
 export const createNote = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, body, tags } = req.body;
+    const { title, body, tags, published } = req.body;
     const note = new Note({
       title,
       body,
       tags,
+      published,
       user: req.userId,
     });
     await note.save();
@@ -39,12 +40,24 @@ export const getNote = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const getPublishedNote = async (req: any, res: Response) => {
+  try {
+    const note = await Note.findOne({ _id: req.params.id, published: true });
+    if (!note) {
+      return res.status(404).json({ message: "Note not found" });
+    }
+    res.json(note);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching note", error });
+  }
+};
+
 export const updateNote = async (req: AuthRequest, res: Response) => {
   try {
-    const { title, body, tags } = req.body;
+    const { title, body, tags, published } = req.body;
     const note = await Note.findOneAndUpdate(
       { _id: req.params.id, user: req.userId },
-      { title, body, tags },
+      { title, body, tags, published },
       { new: true }
     );
     if (!note) {

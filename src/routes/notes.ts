@@ -7,9 +7,12 @@ import {
   updateNote,
   deleteNote,
   searchNotes,
+  getPublishedNote,
 } from "../controllers/noteController";
 
 const router = express.Router();
+
+router.get("/view/:id", getPublishedNote);
 
 router.use(authenticateToken);
 
