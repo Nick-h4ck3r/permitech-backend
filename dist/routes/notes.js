@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const auth_1 = require("../middleware/auth");
 const noteController_1 = require("../controllers/noteController");
 const router = express_1.default.Router();
+router.get("/view/:id", noteController_1.getPublishedNote);
 router.use(auth_1.authenticateToken);
 router.post("/", noteController_1.createNote);
 router.get("/", noteController_1.getNotes);

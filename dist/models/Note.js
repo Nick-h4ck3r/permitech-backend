@@ -28,6 +28,7 @@ const noteSchema = new mongoose_1.Schema({
     title: { type: String, required: true },
     body: { type: String, required: true },
     tags: [{ type: String }],
+    published: { type: Boolean, default: false },
     user: { type: mongoose_1.Schema.Types.ObjectId, ref: "User", required: true },
 }, { timestamps: true });
 exports.default = mongoose_1.default.model("Note", noteSchema);

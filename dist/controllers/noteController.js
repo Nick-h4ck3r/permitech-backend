@@ -12,15 +12,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.searchNotes = exports.deleteNote = exports.updateNote = exports.getNote = exports.getNotes = exports.createNote = void 0;
+exports.searchNotes = exports.deleteNote = exports.updateNote = exports.getPublishedNote = exports.getNote = exports.getNotes = exports.createNote = void 0;
 const Note_1 = __importDefault(require("../models/Note"));
 const createNote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { title, body, tags } = req.body;
+        const { title, body, tags, published } = req.body;
         const note = new Note_1.default({
             title,
             body,
             tags,
+            published,
             user: req.userId,
         });
         yield note.save();
@@ -54,10 +55,23 @@ const getNote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     }
 });
 exports.getNote = getNote;
+const getPublishedNote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const note = yield Note_1.default.findOne({ _id: req.params.id, published: true });
+        if (!note) {
+            return res.status(404).json({ message: "Note not found" });
+        }
+        res.json(note);
+    }
+    catch (error) {
+        res.status(500).json({ message: "Error fetching note", error });
+    }
+});
+exports.getPublishedNote = getPublishedNote;
 const updateNote = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        const { title, body, tags } = req.body;
-        const note = yield Note_1.default.findOneAndUpdate({ _id: req.params.id, user: req.userId }, { title, body, tags }, { new: true });
+        const { title, body, tags, published } = req.body;
+        const note = yield Note_1.default.findOneAndUpdate({ _id: req.params.id, user: req.userId }, { title, body, tags, published }, { new: true });
         if (!note) {
             return res.status(404).json({ message: "Note not found" });
         }
